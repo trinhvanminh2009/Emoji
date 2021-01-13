@@ -33,7 +33,7 @@ public class EmojiWorld {
     private static final int POSITION_ITERATIONS = 2;
     private static final float DENSITY = 0.5F;
     private static final float FRICTION = 0.5F;
-    private static final float RESTITUTION = 0.5F;
+    private static final float RESTITUTION = 0.0F;
     private static final float INITIAL_IMPULSE_X = 0.05F;
     private static final float INITIAL_IMPULSE_Y = 0.05F;
 
@@ -54,12 +54,7 @@ public class EmojiWorld {
 
     public final void createEmoji(Emoji emoji) {
         Log.e("createEmoji", emoji.getPlayerId() + "");
-        if(emoji.getPlayerId() == 0){
-            this.createBody(emoji, 0.1F, 0.1F, 0.1F, 0.9F);
-
-        }else{
-            this.createBody(emoji, 0.1F, 0.9F, 0.1F, 0.1F);
-        }
+        this.createBody(emoji);
     }
 
     public void stopSimulation() {
@@ -89,24 +84,50 @@ public class EmojiWorld {
     }
 
 
-    private Body createBody(Emoji emoji, float startingX, float startingY, float endX,float endY) {
+    private Body createBody(Emoji emoji) {
+
+        float startingX = (float) (Math.random() * (double) this.worldWidth);
+        float startingY = (float) (Math.random() * (double) this.worldHeight);
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DYNAMIC;
-        bodyDef.position.set(startingX, startingY);
+        Log.e("e", startingX +  " "+ startingY);
+        if(emoji.getPlayerId() == 0){
+            bodyDef.position.set(startingX, 0.01F);
+        }else{
+            bodyDef.position.set(startingX, 1);
+        }
+        bodyDef.linearVelocity.x = 0;
+        bodyDef.linearVelocity.y = 0;
         CircleShape shape = new CircleShape();
-        shape.m_radius = Metrics.pixelsToMeters((float) emoji.getViewSize() / 2.0F);
+        shape.m_radius = Metrics.pixelsToMeters(100);
+        FixtureDef fixtureDef = new FixtureDef();
+        fixtureDef.shape = shape;
+        fixtureDef.density = 0.9F;
+        fixtureDef.friction = FRICTION;
+        fixtureDef.restitution = 0F;
         Body body = this.world.createBody(bodyDef);
-        body.m_mass = 0.01f;
+
+        body.createFixture(fixtureDef);
+        body.m_mass = 0.01F;
+
         body.setUserData(emoji);
-        Vec2 impulse = new Vec2(endX, endY);
-        body.applyLinearImpulse(impulse, body.getPosition());
+      //  body.setLinearVelocity(new Vec2(0.1F,0.9F));
+        Vec2 impulse;
+        if(emoji.getPlayerId() == 0){
+            impulse = new Vec2(-0.5F, -0.9F);
+            //body.setTransform(new Vec2(0,0), 0);
+        }else{
+            impulse = new Vec2(0.5F, 0.9F);
+           // body.setTransform(new Vec2(1,1), 90);
+        }
+        body.applyForce(impulse, body.getPosition());
         return body;
     }
 
     private void createWorldBoundaries() {
         BodyDef boundariesBodyDef = new BodyDef();
         boundariesBodyDef.type = BodyType.STATIC;
-        Vec2 topLeft = new Vec2(0.0F, 0.0F);
+        Vec2 topLeft = new Vec2(0.0F, -0.3F);
         Vec2 topRight = new Vec2(this.worldWidth, 0.0F);
         Vec2 bottomLeft = new Vec2(0.0F, this.worldHeight);
         Vec2 bottomRight = new Vec2(this.worldWidth, this.worldHeight);

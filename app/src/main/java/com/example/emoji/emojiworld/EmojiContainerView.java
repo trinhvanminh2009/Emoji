@@ -5,12 +5,16 @@ import android.graphics.Canvas;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
 
+
+import com.example.emoji.R;
 
 import java.util.concurrent.TimeUnit;
 
@@ -40,7 +44,7 @@ public class EmojiContainerView extends FrameLayout implements EmojiWorld.Listen
     private long EMOJI_TEXT_SIZE = 40;
 
     private long EMOJI_CREATION_INTERVAL = 1000L;
-    private int NUMBER_EMOJI_PER_CLICK = 15;
+    private int NUMBER_EMOJI_PER_CLICK = 5;
 
     private final EmojiWorld world = new EmojiWorld(this);
     private Disposable emojiCreationDisposable;
@@ -74,18 +78,14 @@ public class EmojiContainerView extends FrameLayout implements EmojiWorld.Listen
 
     @Override
     protected void onAttachedToWindow() {
-
         super.onAttachedToWindow();
-        onRunEmoji("\uD83D\uDE4A", 1);
-      //  onRunEmoji("\uD83D\uDE46", 0);
+        onRunEmoji();
     }
 
-    public void onRunEmoji(String emojiName, int playerID){
+    public void onRunEmoji(){
         this.post(() -> {
             if (world.state == EmojiWorld.State.IDLE) {
-                world.create(getMeasuredWidth() , getMeasuredHeight() );
-                createEmojis(emojiName, playerID);
-                createEmojis(emojiName, playerID);
+                world.create(getMeasuredWidth() +200 , getMeasuredHeight() +200);
             }
             // Start simulation.
             world.startSimulation();
@@ -94,6 +94,8 @@ public class EmojiContainerView extends FrameLayout implements EmojiWorld.Listen
 
     public void stopRunEmoji(){
         world.stopSimulation();
+        this.removeAllViews();
+        onRunEmoji();
     }
 
     public void createEmojis(String emojiName, int playerID) {
@@ -101,7 +103,6 @@ public class EmojiContainerView extends FrameLayout implements EmojiWorld.Listen
         if (emojiCreationDisposable != null) {
             emojiCreationDisposable.dispose();
         }
-
         for (int i = 0; i < NUMBER_EMOJI_PER_CLICK; i++) {
             Emoji emoji = new Emoji(FrameLayout.generateViewId(), EMOJI_SIZE, emojiName, Float.valueOf(i), Float.valueOf(i), playerID);
             addEmojiView(emoji);
@@ -130,6 +131,7 @@ public class EmojiContainerView extends FrameLayout implements EmojiWorld.Listen
 //            }
             emojiView.setX(emoji.getViewX());
             emojiView.setY(emoji.getViewY());
+            Log.e("onSimulationUpdate", getChildCount() + " ");
 
 
         }

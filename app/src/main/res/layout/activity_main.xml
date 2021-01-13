@@ -8,10 +8,38 @@
     tools:context=".MainActivity">
 
   <com.example.emoji.emojiworld.EmojiContainerView
+      android:id="@+id/emojiContainer"
       android:layout_width="match_parent"
-      android:layout_height="match_parent"
-      android:id="@+id/emojiContainer">
+      android:layout_height="match_parent">
+
 
   </com.example.emoji.emojiworld.EmojiContainerView>
 
+  <Button
+      android:id="@+id/btnRun"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:layout_marginStart="148dp"
+      android:text="Run emoji"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="@+id/emojiContainer" />
+
+  <Button
+      android:id="@+id/btnRun2"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Run emoj Top"
+      app:layout_constraintBottom_toBottomOf="parent"
+      app:layout_constraintEnd_toStartOf="@+id/btnRun"
+      app:layout_constraintStart_toStartOf="parent" />
+
+  <Button
+      android:id="@+id/btnStop"
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:text="Reset run"
+      app:layout_constraintEnd_toEndOf="parent"
+      app:layout_constraintStart_toStartOf="parent"
+      app:layout_constraintTop_toTopOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>
