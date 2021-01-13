@@ -36,7 +36,7 @@ public class EmojiWorld {
     private static final float RESTITUTION = 0.0F;
     private static final float INITIAL_IMPULSE_X = 0.05F;
     private static final float INITIAL_IMPULSE_Y = 0.05F;
-
+    private static final float DEGTORAD = 0.0174532925199432957f;
     public EmojiWorld(Listener listener) {
         this.world = new World(new Vec2(0.0F, 0.0F), true);
         this.listener = listener;
@@ -77,27 +77,50 @@ public class EmojiWorld {
         this.state = State.SIMULATING;
     }
 
-    private void destroyWorld() {
+    public void destroyWorld() {
         for (Body body = this.world.getBodyList(); body != null; body = body.getNext()) {
             this.world.destroyBody(body);
         }
     }
 
+//    private Body createBody(Emoji emoji){
+//        BodyDef bodyDef = new BodyDef();
+//        bodyDef.type = BodyType.DYNAMIC;
+//        bodyDef.position.set(0, 0);
+//
+//        CircleShape shape = new CircleShape();
+//        shape.m_radius = 10.0f;
+//        FixtureDef fixtureDef = new FixtureDef();
+//        fixtureDef.shape = shape;
+//        fixtureDef.density = 1.0f;
+//        fixtureDef.restitution = 0.5f;
+//
+//
+//        Body body = this.world.createBody(bodyDef);
+//        body.createFixture(fixtureDef);
+//        body.setUserData(emoji);
+//        body.m_mass = 0.1f;
+//        body.setTransform(new Vec2(10,20), 45 * DEGTORAD); //45 degrees clockwise.
+//        body.setLinearVelocity(new Vec2(-5.0f, -5.0f));
+//
+//        body.applyForce(new Vec2(1, 1),body.getPosition());
+//        return body;
+//    }
+
 
     private Body createBody(Emoji emoji) {
 
-        float startingX = (float) (Math.random() * (double) this.worldWidth);
+        float startingX = (float) (Math.random() * ((double) this.worldWidth - 0.1));
         float startingY = (float) (Math.random() * (double) this.worldHeight);
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyType.DYNAMIC;
-        Log.e("e", startingX +  " "+ startingY);
+        Log.e("e", startingX +  " "+ startingY + " "+emoji.getPlayerId()  + " worldWidth: "+ this.worldWidth);
         if(emoji.getPlayerId() == 0){
-            bodyDef.position.set(startingX, 0.01F);
+            bodyDef.position.set(startingX, -0.01F);
         }else{
-            bodyDef.position.set(startingX, 1);
+            bodyDef.position.set(startingX, 1F);
         }
-        bodyDef.linearVelocity.x = 0;
-        bodyDef.linearVelocity.y = 0;
+        bodyDef.angle = 100;
         CircleShape shape = new CircleShape();
         shape.m_radius = Metrics.pixelsToMeters(100);
         FixtureDef fixtureDef = new FixtureDef();
@@ -106,18 +129,20 @@ public class EmojiWorld {
         fixtureDef.friction = FRICTION;
         fixtureDef.restitution = 0F;
         Body body = this.world.createBody(bodyDef);
-
         body.createFixture(fixtureDef);
         body.m_mass = 0.01F;
+        //body.setTransform(new Vec2(0.1F,-0.9F), 90 *DEGTORAD);
 
         body.setUserData(emoji);
       //  body.setLinearVelocity(new Vec2(0.1F,0.9F));
         Vec2 impulse;
         if(emoji.getPlayerId() == 0){
-            impulse = new Vec2(-0.5F, -0.9F);
+            impulse = new Vec2(0.01F, 0.99F);
             //body.setTransform(new Vec2(0,0), 0);
+            body.applyForce(impulse, body.getPosition());
         }else{
-            impulse = new Vec2(0.5F, 0.9F);
+            impulse = new Vec2(startingX, 1F);
+           // body.applyForce(impulse, body.getWorldCenter());
            // body.setTransform(new Vec2(1,1), 90);
         }
         body.applyForce(impulse, body.getPosition());

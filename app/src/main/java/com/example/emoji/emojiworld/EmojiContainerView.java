@@ -44,7 +44,7 @@ public class EmojiContainerView extends FrameLayout implements EmojiWorld.Listen
     private long EMOJI_TEXT_SIZE = 40;
 
     private long EMOJI_CREATION_INTERVAL = 1000L;
-    private int NUMBER_EMOJI_PER_CLICK = 5;
+    private int NUMBER_EMOJI_PER_CLICK = 1;
 
     private final EmojiWorld world = new EmojiWorld(this);
     private Disposable emojiCreationDisposable;
@@ -95,6 +95,7 @@ public class EmojiContainerView extends FrameLayout implements EmojiWorld.Listen
     public void stopRunEmoji(){
         world.stopSimulation();
         this.removeAllViews();
+        world.destroyWorld();
         onRunEmoji();
     }
 
